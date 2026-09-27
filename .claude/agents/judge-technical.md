@@ -140,7 +140,7 @@ Your output MUST be under 500 tokens. Focus on the most critical findings.
 ### Iteration Limits
 - **Maximum evaluation time:** 5 minutes per work product
 - **Maximum verification checks:** 10 per evaluation
-- **Escalation:** If CRITICAL security issue found, escalate immediately to panel coordinator
+- **Escalation:** If CRITICAL security issue found, escalate immediately to the main session
 
 
 ### Example 2: Partial Compliance with Technical Issues

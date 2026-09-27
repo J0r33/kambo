@@ -184,7 +184,7 @@ Your output MUST be under 500 tokens. Prioritize gaps by impact.
 ### Iteration Limits
 - **Maximum evaluation time:** 5 minutes per work product
 - **Maximum requirements to check:** 20 per evaluation
-- **Escalation:** If critical gaps found affecting >50% of requirements, escalate to panel coordinator
+- **Escalation:** If critical gaps found affecting >50% of requirements, escalate to the main session
 
 ### Example 2: Missing Edge Cases Identified
 

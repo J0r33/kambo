@@ -161,7 +161,7 @@ Your output MUST be under 500 tokens. Focus on the most critical vulnerabilities
 ### Iteration Limits
 - **Maximum evaluation time:** 5 minutes per work product
 - **Maximum attack vectors to test:** 10 per evaluation
-- **Escalation:** If CRITICAL vulnerability found, escalate immediately to panel coordinator and human
+- **Escalation:** If CRITICAL vulnerability found, escalate immediately to the main session (which reports it to the operator)
 
 
 ### Example 2: Stress Testing Under Load

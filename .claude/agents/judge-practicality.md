@@ -172,7 +172,7 @@ Your output MUST be under 500 tokens. Focus on actionable improvements.
 ### Iteration Limits
 - **Maximum evaluation time:** 5 minutes per work product
 - **Maximum friction points to report:** 5 (prioritize by impact)
-- **Escalation:** If ROI assessment is Negative, flag for panel coordinator review
+- **Escalation:** If ROI assessment is Negative, flag for the main session review
 
 ### Example 2: Resource Constraints Evaluation
 

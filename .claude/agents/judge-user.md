@@ -175,7 +175,7 @@ Your output MUST be under 500 tokens. Focus on the biggest user experience issue
 ### Iteration Limits
 - **Maximum evaluation time:** 5 minutes per work product
 - **Maximum pain points to report:** 5 (prioritize by user impact)
-- **Escalation:** If score <2 (Hostile UX), escalate to panel coordinator with specific user journey failures
+- **Escalation:** If score <2 (Hostile UX), escalate to the main session with specific user journey failures
 
 
 ### Example 2: Multiple User Personas
