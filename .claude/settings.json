@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "mcp__claude_ai_Supabase",
+      "mcp__claude_ai_Vercel",
+      "mcp__claude_ai_Linear__merge_diff",
+      "mcp__github__merge_pull_request",
+      "mcp__claude_ai_GitHub__merge_pull_request",
+
+      "Bash(*gh pr merge*)",
+      "Bash(*gh api*pulls/*/merge*)",
+      "Bash(*gh api graphql*ergePullRequest*)",
+      "Bash(*gh api graphql*nablePullRequestAutoMerge*)",
+      "Bash(*git push*--force*)",
+      "Bash(*git push* -f*)",
+      "Bash(*git push*origin +*)",
+      "Bash(*git push*origin main*)",
+      "Bash(*git push*origin dev*)",
+      "Bash(*git push*:main*)",
+      "Bash(*git push*:dev*)",
+      "Bash(*supabase db push*)",
+      "Bash(*supabase config push*)",
+      "Bash(*supabase db reset --linked*)",
+      "Bash(*supabase migration up --linked*)",
+      "Bash(*supabase functions deploy*)",
+      "Bash(*supabase secrets set*)",
+      "Bash(*vercel*--prod*)",
+      "Bash(*vercel promote*)",
+      "Bash(*vercel env*)",
+
+      "PowerShell(*gh pr merge*)",
+      "PowerShell(*gh api*pulls/*/merge*)",
+      "PowerShell(*gh api graphql*ergePullRequest*)",
+      "PowerShell(*git push*--force*)",
+      "PowerShell(*git push* -f*)",
+      "PowerShell(*git push*origin +*)",
+      "PowerShell(*git push*origin main*)",
+      "PowerShell(*git push*origin dev*)",
+      "PowerShell(*git push*:main*)",
+      "PowerShell(*git push*:dev*)",
+      "PowerShell(*supabase db push*)",
+      "PowerShell(*supabase functions deploy*)",
+      "PowerShell(*supabase secrets set*)",
+      "PowerShell(*vercel*--prod*)",
+      "PowerShell(*vercel promote*)",
+      "PowerShell(*vercel env*)",
+
+      "Edit(.claude/settings.json)",
+      "Write(.claude/settings.json)"
+    ]
+  }
+}
