@@ -1,0 +1,64 @@
+# Blocking check: PR title follows `type(KAM-xxx): description` and the PR body
+# keeps the template's sections. Exempt: promotion PRs (dev -> main) and bots.
+name: pr-template-check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches: [main, dev]
+
+permissions: {}
+
+concurrency:
+  group: template-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: title + template
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Validate PR title and body
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          ACTOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          # --- Exemptions -------------------------------------------------
+          case "$ACTOR" in
+            dependabot*|renovate*) echo "Exempt: bot PR ($ACTOR)"; exit 0;;
+          esac
+          if [ "$HEAD_REF" = "dev" ] && [ "$BASE_REF" = "main" ]; then
+            echo "Exempt: promotion PR ($HEAD_REF -> $BASE_REF)"
+            exit 0
+          fi
+
+          fail=0
+
+          # --- Title: type(KAM-xxx): description ---------------------------
+          if ! printf '%s' "$TITLE" | grep -qE '^(feat|fix|chore|docs|refactor|test|build|ci|perf|revert|style)\(KAM-[0-9]+\): .+'; then
+            echo "::error::PR title must match 'type(KAM-xxx): description', e.g. 'feat(KAM-12): add hero section'. Got: $TITLE"
+            fail=1
+          fi
+
+          # --- Body: template sections present ----------------------------
+          # "## Blast radius" makes beat 4 a checkable artifact rather than a
+          # self-attestation. See AGENTS.md "Workflow" and .claude/commands/beat-4.md.
+          for section in "## Summary" "## Blast radius" "## Testing checklist" "## Data & privacy" "## Docs"; do
+            if ! printf '%s' "$BODY" | grep -qF "$section"; then
+              echo "::error::PR body is missing the '$section' section from the PR template."
+              fail=1
+            fi
+          done
+
+          # --- Body: at least one completed checklist item ----------------
+          if ! printf '%s' "$BODY" | grep -qE '^\s*- \[x\]'; then
+            echo "::error::PR body has no checked checklist items — fill in the Testing / Data & privacy sections."
+            fail=1
+          fi
+
+          exit $fail
