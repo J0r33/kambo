@@ -9,7 +9,12 @@ The public website for a Kambo practice, and a portfolio piece. Two jobs, in thi
    This is **health data** and is the most sensitive thing the site will ever touch.
 
 Stack: Next.js (App Router) + React + TypeScript + Tailwind, pnpm, deployed on Vercel. Client intake
-data lives in Supabase (its own project, see Accounts). Repo: `J0r33/kambo` (public).
+data will live in Supabase (its own project, see Accounts). Repo: `J0r33/kambo` (public).
+
+**Status (update as it changes):** the Next.js app lands with KAM-2 — until then there is no
+`package.json`, no `node_modules`, and none of the `pnpm` gates below can run. Vercel is not yet
+connected (no deployments exist). Supabase does not exist yet. Where this file or a command
+describes those, it describes the target state; report "not set up yet" rather than a pass.
 
 ## Human-only gates
 
@@ -22,7 +27,9 @@ Hard boundaries, not defaults. You **prepare** work; the operator alone exercise
 - **Gate B — The operator alone merges pull requests, by hand.** You **never** merge a PR under any
   circumstance: not the merge button, not the GitHub API/MCP, not `gh`, not auto-merge, not a
   workflow you trigger. You open PRs and push to feature branches; the operator reviews and merges.
-  "Solo project" removes the second reviewer, not the operator's merge authority.
+  "Solo project" removes the second reviewer, not the operator's merge authority. With zero
+  required approvals, the operator's token *can* merge — `.claude/settings.json` denies the known
+  merge paths, but that is a partial backstop. This rule is the boundary.
 - **Gate C — The operator alone verifies against a deployed environment.** Checks against a Vercel
   preview or production are run by the operator. You may **build and wire** that tooling and
   explain how to run it — you do not execute it against a deployed environment. (The local dev
@@ -31,13 +38,25 @@ Hard boundaries, not defaults. You **prepare** work; the operator alone exercise
   approvals, live-environment tests, repository/account settings, and anything that sends a message
   or publishes content are operator actions. Prepare the change, push the branch, open the PR, hand
   off — then stop and wait.
+  - **Explicit carve-outs** (the only ones): pushing a *feature* branch, even though Vercel builds
+    a preview from it; opening a PR into `dev`; commenting on your own PR; creating and updating
+    issues and comments in the Linear **Kambo** team. Promoting, aliasing, redeploying, changing
+    env vars, or touching any project setting is not carved out.
 
 ## Product
 
-- **No medical claims.** Never write copy saying Kambo treats, cures, or prevents any disease or
-  condition, and never present it as a substitute for medical care. Describe the practice, the
-  experience, and the safety process. Any copy touching health, safety, or contraindications is
-  a sensitive surface and goes to the operator for sign-off in the PR.
+- **No health claims, stated or implied.** Never write copy saying or implying that Kambo treats,
+  cures, prevents, heals, detoxifies, boosts or resets anything in the body or mind, and never
+  present it as a substitute for medical care. That includes indirect forms: "people come to Kambo
+  for anxiety / addiction / …", testimonials, page titles, meta descriptions, alt text, and
+  structured data (schema.org). Describe the practice, the experience, and the process — not
+  outcomes.
+- **You never author safety content.** Contraindications, medical screening questions, safety
+  instructions, preparation, and aftercare text come **verbatim from the operator**. Do not draft,
+  extend, reorder, summarise, or "improve" them from your own knowledge — an incomplete
+  contraindication list is the one way this site could physically hurt someone. Where such content
+  is needed and not yet supplied, leave a visible `TODO-OPERATOR: <what is needed>` placeholder.
+  Any PR that touches health or safety copy quotes every changed sentence for operator sign-off.
 - Write in plain, warm, calm language. Visitors are often anxious and are not technical.
 - **Design is the point, performance is the constraint.** Most visitors are on a phone. Every
   interactive or 3D element needs a lightweight mobile path, must respect
@@ -49,7 +68,9 @@ Hard boundaries, not defaults. You **prepare** work; the operator alone exercise
   trackers, URLs, or emails in plain text. Intake answers never appear in a query string.
 - Sensitive surfaces: intake forms and health questionnaires, contraindication screening,
   waivers and signatures, client contact details, Supabase schema/RLS/edge functions, admin auth,
-  secrets and env vars, CI workflows, and health/safety copy.
+  secrets and env vars, health/safety copy, and the process itself — `.github/**`, `.claude/**`
+  (especially `.claude/settings.json`), and this file. Never loosen a deny rule or a gate to get
+  your own work through; propose it in a PR and say why.
 
 ## Accounts and services
 
@@ -60,10 +81,38 @@ Hard boundaries, not defaults. You **prepare** work; the operator alone exercise
 - Secrets reach code **only** through env vars. Commit a `.env.example` with names and no values;
   never commit a real `.env*` file. A Supabase project ref or key appearing as a literal in source
   is a bug.
-- Any Supabase MCP access must be read-only (`?read_only=true`). Develop against LOCAL Supabase.
-  Never mutate remote schema or data by hand — not via MCP, not via `supabase db push`. Database
-  changes ship as committed migration files only.
+- **The Supabase and Vercel connectors in this environment are account-wide and write-capable.**
+  The claude.ai connectors (`mcp__claude_ai_Supabase__*`, `mcp__claude_ai_Vercel__*`) reach every
+  project on the operator's account — including other clients' production databases — and there
+  is no read-only URL to set. So in this repo they are **denied outright** in
+  `.claude/settings.json`. Do not route around that with another tool; if you need something from
+  a hosted project, ask the operator.
+- Develop against LOCAL Supabase. Never mutate remote schema or data — not via a connector, not
+  via the CLI. Database changes ship as committed migration files only. **Never select row data
+  from any table holding client information**, local or remote — inspect structure
+  (`information_schema`, `pg_catalog`, migrations), never contents.
+- **Linear is a shared workspace.** The `KAM` team sits alongside other teams (e.g. `HID`). Only
+  read or write issues in the **Kambo** team; never touch another team's issues.
 - Git identity is the operator's global config. Do not change `user.name` / `user.email`.
+
+## Before any intake code
+
+Client intake is gated on operator decisions that do not exist yet. **Do not write intake code,
+schema, or routes until a KAM ticket records all of these as decided:**
+
+- the Supabase project and org it lives in, and that nothing else shares it
+- how migrations reach the hosted project (a CI deploy lane, or the operator by hand — written down)
+- Vercel preview and production use **separate** Supabase projects/keys; previews never hold
+  production credentials; Vercel Deployment Protection is on for previews
+- consent wording, privacy notice, retention period, and deletion process — and which health-data
+  laws apply (e.g. Washington's My Health My Data Act, depending on where clients are)
+- what is collected, and why each field is necessary (collect the minimum)
+
+## Scoped contracts (create as needed)
+
+- `supabase/AGENTS.md` — migrations, RLS, functions, local database workflow, and the proof
+  required for each. Create it in the same PR that creates `supabase/`.
+- Keep durable context close to the code it governs.
 
 ## Workflow — every ticket runs the five beats
 
@@ -73,8 +122,8 @@ Tickets live in Linear, team **Kambo**, prefix **`KAM-`**. The Linear tools in t
 Every ticket goes through all five beats in order, even small ones:
 
 1. **Pick Up & Branch** (`/beat-1`) — set the KAM ticket In Progress, branch from `dev`
-   (`git fetch origin && git checkout -b <type>/KAM-xxx-<short-desc> origin/dev`); `/flow` to
-   orient.
+   (`git fetch origin && git checkout --no-track -b <type>/KAM-xxx-<short-desc> origin/dev`);
+   `/flow` to orient.
 2. **Build & Commit** (`/beat-2`) — `/ticket-architect` then `/impl-prep` to design and validate;
    build in small, conventional, scoped commits.
 3. **Test & Document** (`/beat-3`) — local gates (`pnpm typecheck` / `lint` / `build`, plus `test`
@@ -106,11 +155,16 @@ duplicate.
 ## Delivery
 
 - Release flow: feature branch → `dev` → `main` (production). Cut feature branches from
-  `origin/dev`. Vercel builds a preview for every PR; `main` is what the live site serves.
+  `origin/dev`. Once Vercel is connected it builds a preview for every pushed branch, and `main`
+  is what the live site serves.
+- **Every feature PR targets `dev` — pass `--base dev` explicitly.** Check the repo's default branch
+  before relying on a bare `gh pr create`. The only PR ever opened into `main` is the operator's
+  `dev → main` promotion; `pr-template-check` fails any other PR into `main`.
 - **Never commit or push directly to `dev` or `main`.** A ruleset enforces this (PR required, no
   deletion, no force-push) — it is a backstop, not the rule.
 - Feature PRs into `dev` are **squash**-merged. Promotion PRs `dev → main` are **merge commits**, so
-  the two branches never diverge. Both are the operator's to merge.
+  the two branches never diverge. Both are the operator's to merge. (This is convention unless the
+  ruleset restricts merge methods per branch — check it rather than assume.)
 - Feature branches ARE pushed — that is how the PR and its CI run. Never force-push. Never set a
   feature branch's upstream to `dev` or `main`.
 - Commits: conventional and scoped, `type(KAM-xxx): description`. Commit only changes scoped to

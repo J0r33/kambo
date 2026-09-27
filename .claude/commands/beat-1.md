@@ -41,14 +41,14 @@ before branching, not after.
 
 ```
 git fetch origin --prune
-git checkout -b <type>/KAM-xxx-<short-desc> origin/dev
-git branch --unset-upstream
+git checkout --no-track -b <type>/KAM-xxx-<short-desc> origin/dev
 ```
 
 - `<type>` is one of `feat | fix | chore | docs | refactor | test | build | ci | perf | revert | style`.
 - **Always branch from `origin/dev`.** Never from `main`.
-- `--unset-upstream` matters: a branch cut from `origin/dev` tracks it, so a bare `git push` would
-  aim at `dev`. Beat 5 pushes with `-u origin <branch>`, which sets the right upstream.
+- `--no-track` matters: without it a branch cut from `origin/dev` tracks `dev`, so a bare
+  `git push` would aim at `dev`. Beat 5 pushes with `-u origin <branch>`, which sets the right
+  upstream.
 - **Never commit directly to `dev` or `main`.**
 - One ticket per branch, one branch per PR. Never reuse an umbrella ticket for several PRs.
 

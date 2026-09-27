@@ -65,8 +65,10 @@ State: the traced commit, the risk level, the affected features, every checklist
 result, and anything deferred to the operator with the reason.
 
 **Keep this output.** It goes into the PR body's `## Blast radius` section in beat 5.
-`.github/workflows/pr-template-check.yml` requires that section, so a PR cannot be opened claiming
-this beat ran without carrying its output. Do not defeat it by pasting a placeholder.
+`.github/workflows/pr-template-check.yml` fails the PR unless that section records a real
+`Traced at commit:` SHA and at least one ticked checklist item. That checks structure, not truth —
+it cannot tell a worked checklist from a copied one — so the honesty is yours. Paste the real,
+worked checklist; never a placeholder.
 
 ## Rules
 

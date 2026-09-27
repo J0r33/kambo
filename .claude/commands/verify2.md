@@ -1,7 +1,7 @@
 ---
 description: Quick 2-judge review (senior engineer + critic) of the current diff. The lightest verify option, for small changes and hotfixes.
 argument-hint: [optional PR number or ticket id; defaults to current branch diff]
-allowed-tools: Bash, Read, Grep, Glob, Task, mcp__claude_ai_Linear__save_comment, mcp__claude_ai_Linear__get_issue
+allowed-tools: Bash, Read, Grep, Glob, Agent, mcp__claude_ai_Linear__save_comment, mcp__claude_ai_Linear__get_issue
 ---
 
 # /verify2
@@ -62,6 +62,9 @@ Synthesize both reviews into a clear markdown report: agreed issues first (highe
 each judge's unique points, then a combined verdict and the must-fix list.
 
 Then log it:
-1. Linear — comment on the ticket via `mcp__claude_ai_Linear__save_comment`.
+1. Linear — comment on the KAM ticket via `mcp__claude_ai_Linear__save_comment`.
 2. GitHub — post to the PR if one exists (`gh pr comment`). In beat 5 this runs *before* the PR
    exists; log to Linear only and carry the findings into the PR body instead.
+
+Both are within the Gate D carve-outs in `AGENTS.md` (a comment on your own PR, and on a Kambo
+team issue). Never include client data in either.

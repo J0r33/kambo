@@ -37,14 +37,14 @@ pre-empt its findings, and do not dismiss a finding because you already consider
 health questionnaire, contraindications, waivers, client contact details, Supabase schema/RLS,
 admin auth, secrets — escalate beyond two judges.
 
-**Preferred for sensitive diffs: run `panel-coordinator` INSTEAD OF `/verify2`.** It enforces a
-five-judge floor and synthesizes one scored verdict. Never run it *alongside* `/verify2` — its
-roster already contains `judge-technical`, so that asks the same question twice.
-
-**If you instead add judges to `/verify2`**, add ones it did not already run: the pool is
-`judge-adversarial`, `judge-completeness`, `judge-user` and `judge-practicality`. **Add at least
-two** and synthesize them yourself into a single verdict, stating how you resolved any
-disagreement. On anything touching health data, `judge-adversarial` is not optional.
+**How to escalate:** spawn the extra judges yourself, **from this main session, in the same
+message as `/verify2`'s two** — a subagent cannot spawn further subagents, so there is no
+"coordinator" agent to delegate the panel to. Add judges `/verify2` does not already run; the pool
+is `judge-adversarial`, `judge-completeness`, `judge-user` and `judge-practicality`. **Add at least
+two** — "beyond two judges" must not be satisfiable by adding one. On anything touching health
+data or health/safety copy, `judge-adversarial` and `judge-user` are not optional. Then
+synthesize every report yourself into a single verdict, stating how you resolved each
+disagreement.
 
 Then **address what it finds**. A verify pass whose findings you noted and moved past is not a
 verify pass. Fix, or state in one line why the finding does not hold, with evidence.
@@ -87,9 +87,11 @@ recorded. Running those checks is **your** job. What genuinely needs the operato
 Gate C items (Vercel preview, production) and the Gate A judgement of whether the result is good
 enough. Ask about those; do not ask them to re-run what you already ran.
 
-The PR's **base is `dev`**. Title must match `type(KAM-xxx): description` — `pr-template-check.yml`
-hard-fails otherwise. The body keeps every template section and has at least one `- [x]`, and
-carries:
+The PR's **base is `dev`** — pass `--base dev` explicitly. `pr-template-check.yml` fails the PR if
+the title is not `type(KAM-xxx): description`, if a template heading is missing, if
+`## Blast radius` lacks a real traced SHA or a ticked item, or if the base is `main`. (It blocks a
+merge only if it is set as a required status check — that is the operator's setting.) It checks
+structure, not truth, so the body must also carry:
 
 - what changed and why, with the ticket linked
 - beat 4's report in `## Blast radius`, **including the traced commit**
@@ -108,8 +110,8 @@ operator's.
 Hand off and stop. Per `AGENTS.md`:
 
 - **Never merge the PR** (Gate B). Not the merge button, not the API/MCP, not `gh`, not
-  auto-merge. `gh pr merge` and the merge tools are in `permissions.deny` in
-  `.claude/settings.json` — that is a backstop, not the rule. Do not look for a path around it.
+  auto-merge, not through any shell. `.claude/settings.json` denies the known merge paths — a
+  partial backstop, not the rule. Do not look for a path around it.
 - Never approve a quality gate on the operator's behalf (Gate A). Report CI factually.
 - Never verify against a deployed environment (Gate C).
 
@@ -128,7 +130,8 @@ results as facts, and exactly what is now waiting on the operator.
 ## Rules
 
 - Do not merge. Ever.
-- Do not mark a PR ready-for-review or undraft it on the operator's behalf unless they asked.
+- Open the PR as ready for review (this is a solo project). If the operator asked for a draft,
+  open a draft and do not undraft it on their behalf.
 - Do not skip `/verify2` because the change is small — it is the cheapest review option and it
   exists for exactly that case.
 - Beat 5 ends with you stopping and waiting. That is the deliverable.

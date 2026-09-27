@@ -11,7 +11,7 @@ The required gate before any PR. It will not create a PR until the requirements 
 
 1. Runs `/blast-radius --branch` (unless `--skip-blast-radius`)
 2. Presents the testing checklist with results
-3. BLOCKS until every HIGH and MEDIUM item has a result
+3. BLOCKS until every checklist item has a result
 4. Verifies the build passes
 5. Only THEN creates the PR
 
@@ -24,7 +24,7 @@ If not skipped, run `/blast-radius --branch`.
 
 ## Phase 2: Testing gate
 
-Present the checklist with results for every HIGH and MEDIUM item.
+Present the checklist with a result for every item — HIGH, MEDIUM and anything else on it.
 
 Running the checks is the agent's job — "Human testing is FINAL acceptance, not your preliminary
 QA." If beat 4 already worked the checklist, present those recorded results; do not ask the
@@ -61,14 +61,17 @@ If any fails, STOP and fix. A script that does not exist yet is reported as such
 Only after all of the above. **Base branch: `dev`.**
 
 The PR body MUST follow `.github/PULL_REQUEST_TEMPLATE.md` — that file is the source of truth.
-`.github/workflows/pr-template-check.yml` hard-fails any PR whose title is not
-`type(KAM-xxx): description`, whose body is missing `## Summary`, `## Blast radius`,
-`## Testing checklist`, `## Data & privacy`, or `## Docs`, or that has no `- [x]` item.
+`.github/workflows/pr-template-check.yml` fails the PR if its base is `main`, its title is not
+`type(KAM-xxx): description`, a heading (`## Summary`, `## Blast radius`, `## Testing checklist`,
+`## Data & privacy`, `## Docs`) is missing, `## Blast radius` lacks a real `Traced at commit:` SHA
+or a ticked item, or no box is ticked. It blocks merging only when set as a required status check
+(operator setting), and it checks structure, not truth.
 
 - **`## Summary`** — what and why; link the Linear ticket; one line of blast-radius summary.
 - **`## Blast radius`** — beat 4's report, with the traced commit and the worked checklist.
 - **`## Testing checklist`** — tick only what was actually run; each item with its result.
-- **`## Data & privacy`** — tick the accurate box; describe any client-data or copy impact.
+- **`## Data & privacy`** — tick the accurate box; describe any client-data impact. Fill
+  **Health & safety copy** with every changed health/safety sentence and its source, or "None".
 - **`## Docs`** — tick the accurate box.
 
 Anything needing the operator — a Vercel preview check (Gate C), a credential you do not hold —
@@ -80,6 +83,7 @@ gh pr create --base dev --title "type(KAM-xxx): description" --body-file <file>
 
 ## Emergency override
 
-With `--emergency`, create the PR but prepend the description with an
-"EMERGENCY PR — TESTING SKIPPED" block stating the reason and what must be tested, and add a
-`needs-testing` label. The operator still merges it by hand.
+`--emergency` is available **only when the operator explicitly asked for it in this session** —
+never on your own judgement. Then create the PR but prepend the description with an
+"EMERGENCY PR — TESTING SKIPPED" block stating who asked, the reason, and exactly what must still
+be tested. Do not create labels (a repo setting). The operator still merges it by hand.

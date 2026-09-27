@@ -33,14 +33,20 @@ was invoked, not a clean bill of health.
 
 ## Step 2: Categorize
 
-- **New files** — no existing consumers, lower risk
 - **Modified files** — need connection tracing
+- **New files wired in by convention or path** — need connection tracing too. In Next.js a new
+  file can change behaviour with no importer at all: `page`, `layout`, `route`, `loading`,
+  `error`, `not-found`, `template`, `middleware` / `proxy`, `instrumentation`, `sitemap`,
+  `robots`, `opengraph-image`, `icon`, anything under `app/api/`; plus `next.config.*`,
+  `vercel.json`, `package.json`, `.env.example`, `.github/**`, `.claude/**`. Trace these like
+  modified files. In a young repo most PRs are all-new files, so "new = low risk" is wrong here.
+- **Other new files** — no existing consumers; lower risk
 - **Deleted files** — need reference verification
 
 ## Step 3: Trace connections (parallel)
 
-For each MODIFIED file, spawn a `deps-mapper` agent (fall back to `general-purpose`), all in one
-message:
+For each MODIFIED file and each new file wired in by convention or path (Step 2), spawn a
+`deps-mapper` agent (fall back to `general-purpose`), all in one message:
 
 ```
 Task(subagent_type: "deps-mapper", prompt:
@@ -71,9 +77,12 @@ is not therefore safe.
 For each DELETED file, search for lingering references — both forms, always:
 
 ```bash
-grep -rn "<name-without-extension>" src/
-grep -rn "<name-with-extension>" .github/ package.json next.config.* public/
+git grep -n "<name-without-extension>" -- . ':!node_modules'
+git grep -n "<name-with-extension>"    -- . ':!node_modules'
 ```
+
+Search the whole tracked tree, not one folder — the app may live in `app/` or `src/app/`, and
+workflows, configs and `.claude/` commands reference files by path.
 
 Any match = flag as a BUILD BREAKER.
 
@@ -88,9 +97,12 @@ Traced at commit: [short SHA] (vs `origin/dev`)
 - [file — +/- lines]
 
 ### Risk assessment
-- HIGH:   [intake / health data / auth / secrets / CI & deploy lane]
+- HIGH:   [intake / health data / auth / secrets / health & safety copy / CI & deploy lane /
+           `.claude/settings.json`]
 - MEDIUM: [pages & features]
-- LOW:    [utilities / styles / types / config]
+- LOW:    [utilities / styles / types]
+(Rate config by what it configures: `next.config.*` headers, `vercel.json`, middleware/proxy and
+workflows are HIGH; a lint rule tweak is LOW.)
 
 ### Affected features
 - [page or feature]: [which files]

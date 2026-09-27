@@ -33,7 +33,7 @@ You are a dependency mapping specialist. Your job is to trace import/export rela
 - `react` → [specific imports]
 
 **Dependents** (files that import this):
-- `src/pages/home.tsx`
+- `src/app/page.tsx`
 - `src/components/Widget.tsx`
 
 **Shared Dependencies** (used by multiple related files):

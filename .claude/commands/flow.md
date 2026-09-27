@@ -46,7 +46,7 @@ Offer ONE primary next action plus alternatives on one line:
 - **STARTING** → `/beat-2 <ticket>` — `/ticket-architect` to design, then `/impl-prep` to validate
 - **BUILDING** → keep building; then `/beat-3` for gates + proof, `/beat-4` for blast radius
 - **TESTING** → fix what CI reports; `/beat-5` if the PR is not open yet
-- **RESPONDING** → address review items, then `/yeet` to hand back
+- **RESPONDING** → address review items and push; `/yeet` only if a reviewer has been added
 - **SHIPPING** → hand off to the operator; they merge by hand (Gate B). Clean up the branch after
 - **STALE** → resume, park, or delete the branch
 
