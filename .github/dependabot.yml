@@ -12,7 +12,7 @@
 # pnpm (re-checked 2026-09-28 against dependabot-core main @ ca78c14, pnpm_package_manager.rb and
 # npm_and_yarn/Dockerfile): Dependabot supports pnpm 7-12, and its updater image ships pnpm 11.x.
 # It installs the version pinned in package.json `packageManager` through corepack (pnpm 10.x
-# here), and it does not bump `packageManager` itself. The move to pnpm 11 is tracked in KAM-7.
+# here), and it does not bump `packageManager` itself. The move to pnpm 11 is tracked in KAM-8.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -37,7 +37,7 @@ updates:
     # value would also hold back (or silently downgrade) security fixes for transitive
     # dependencies. The durable fix is pnpm >= 11.3, where Dependabot runs this step with
     # `minimumReleaseAgeStrict=false` and `trustLockfile=true`, so pnpm falls back instead of
-    # failing (KAM-7).
+    # failing (KAM-8).
     cooldown:
       default-days: 3
     commit-message:
