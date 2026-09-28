@@ -1,0 +1,12 @@
+# pnpm 10 settings for this single-package repo (no `packages:` key: this is not a monorepo).
+#
+# pnpm 10 never runs dependency build scripts unless they are allow-listed. This list only
+# silences the "Ignored build scripts" warning for scripts we have checked and do not need;
+# it does not change what runs.
+ignoredBuiltDependencies:
+  # unrs-resolver (via eslint-config-next's import resolver) has a postinstall that only
+  # downloads its native binding when the platform's optionalDependency binding is missing.
+  # pnpm installs that binding (linux-x64-gnu in CI, win32-x64-msvc locally), so the
+  # postinstall has nothing to do. If the binding were ever missing, the resolver throws and
+  # lint fails loudly rather than checking less.
+  - unrs-resolver
