@@ -1,0 +1,106 @@
+# CI gates for the Next.js app.
+#
+# What it enforces, precisely (see AGENTS.md "A gate must not overclaim"), in this order, stopping
+# at the first failure:
+#   - the pnpm version corepack resolves equals the version pinned in package.json `packageManager`
+#   - `pnpm install --frozen-lockfile`: pnpm-lock.yaml is in sync with package.json
+#   - `pnpm typecheck` (`next typegen && tsc --noEmit`): no TypeScript errors
+#   - `pnpm lint` (`eslint --max-warnings=0`): no ESLint errors AND no warnings
+#   - `pnpm build` (`next build`): the production build succeeds
+# What it does NOT do: run tests (no test runner exists yet), check pages in a browser,
+# accessibility, bundle size, or anything against a deployed environment (Gate C, operator only).
+# It only blocks a merge if the operator adds its check, "typecheck + lint + build", as a required
+# status check on the ruleset. Deliberately no `paths:` filter: a required check that is filtered
+# out stays "Expected" forever and blocks the PR.
+# Actions: GitHub-authored only, each pinned to a full commit SHA with its tag in a comment
+# (Dependabot's github-actions updates bump both).
+name: ci
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+permissions: {}
+
+concurrency:
+  # Distinct prefix: pr-template-check uses `template-`; sharing a group would cancel it.
+  group: ci-${{ github.ref }}
+  # Supersede stale runs on a PR; never cancel a run for a commit already on dev/main.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  gates:
+    name: typecheck + lint + build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node (version from package.json engines.node)
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: package.json
+          # pnpm is not on PATH yet, and the store is cached explicitly below.
+          package-manager-cache: false
+
+      - name: Enable pnpm via corepack and assert the pinned version
+        run: |
+          set -euo pipefail
+          corepack enable
+          expected=$(node -p "require('./package.json').packageManager.split('@')[1].split('+')[0]")
+          actual=$(pnpm --version)
+          echo "node $(node --version), pnpm $actual (packageManager pins $expected)"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::pnpm on PATH is $actual but package.json packageManager pins $expected."
+            exit 1
+          fi
+
+      - name: Locate the pnpm store
+        id: pnpm-store
+        run: |
+          set -euo pipefail
+          store=$(pnpm store path --silent)
+          if [ -z "$store" ]; then
+            echo "::error::'pnpm store path' returned nothing; cannot cache the store."
+            exit 1
+          fi
+          echo "path=$store" >> "$GITHUB_OUTPUT"
+
+      # Caches only speed things up; correctness never depends on them (install is frozen).
+      - name: Cache the pnpm store
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache the Next.js build cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'public/**', 'next.config.*', 'tsconfig.json', 'postcss.config.*') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
