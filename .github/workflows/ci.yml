@@ -4,9 +4,12 @@
 # at the first failure:
 #   - the pnpm version corepack resolves equals the version pinned in package.json `packageManager`
 #   - `pnpm install --frozen-lockfile`: pnpm-lock.yaml is in sync with package.json
-#   - `pnpm typecheck` (`next typegen && tsc --noEmit`): no TypeScript errors
-#   - `pnpm lint` (`eslint --max-warnings=0`): no ESLint errors AND no warnings
-#   - `pnpm build` (`next build`): the production build succeeds
+#   - `pnpm typecheck`: no TypeScript errors
+#   - `pnpm lint`: no ESLint errors AND no warnings
+#   - `pnpm build`: the production build succeeds
+# The commands behind those three live in package.json `scripts` (today: `next typegen && tsc
+# --noEmit`, `eslint --max-warnings=0`, `next build`). Editing those scripts changes this gate:
+# review a diff to them as a gate change.
 # What it does NOT do: run tests (no test runner exists yet), check pages in a browser,
 # accessibility, bundle size, or anything against a deployed environment (Gate C, operator only).
 # It only blocks a merge if the operator adds its check, "typecheck + lint + build", as a required
@@ -53,7 +56,8 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: package.json
-          # pnpm is not on PATH yet, and the store is cached explicitly below.
+          # setup-node only auto-caches for npm; explicit here because the pnpm store is cached
+          # by its own step below.
           package-manager-cache: false
 
       - name: Enable pnpm via corepack and assert the pinned version

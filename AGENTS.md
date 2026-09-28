@@ -13,7 +13,7 @@ data will live in Supabase (its own project, see Accounts). Repo: `J0r33/kambo` 
 
 **Status (update as it changes):** the Next.js app exists (KAM-2): Next 16 under `src/app`,
 pnpm 10 pinned in `packageManager`, Node 24. `pnpm typecheck` / `lint` / `build` run locally
-(`pnpm install` first) and in CI (`.github/workflows/ci.yml`, check `typecheck + lint + build`).
+(`corepack enable`, then `pnpm install`) and in CI (`.github/workflows/ci.yml`, check `typecheck + lint + build`).
 Whether that check blocks a merge depends on the ruleset's required checks, an operator setting,
 so read the ruleset rather than assume. There is **no `test` script yet**. Vercel is not yet
 connected (no deployments exist). Supabase does not exist yet. Where this file or a command

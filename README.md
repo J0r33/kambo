@@ -1,7 +1,7 @@
 # kambo
 
 This is my Kambo Practitioner Website: the public site for a Kambo practice, and a portfolio
-piece. It is design-forward and interactive, built to stay fast on a mid-range phone and to be
+piece. The goal is a design-forward, interactive site that stays fast on a mid-range phone and is
 accessible (keyboard, visible focus, real contrast, reduced motion respected).
 
 > Status: early scaffold. The app currently renders a placeholder page; content, design system
@@ -45,6 +45,7 @@ There is no test runner yet.
 
 ```
 src/app/            App Router routes, layouts and global styles
+pnpm-workspace.yaml pnpm settings (single package, not a monorepo)
 .github/            CI (`workflows/ci.yml`), PR template, Dependabot
 .claude/            Agent commands and roles for the five-beat workflow
 AGENTS.md           Rules for agents working in this repo (CLAUDE.md points to it)
