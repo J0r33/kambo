@@ -7,6 +7,8 @@ ignoredBuiltDependencies:
   # unrs-resolver (via eslint-config-next's import resolver) has a postinstall that only
   # downloads its native binding when the platform's optionalDependency binding is missing.
   # pnpm installs that binding (linux-x64-gnu in CI, win32-x64-msvc locally), so the
-  # postinstall has nothing to do. If the binding were ever missing, the resolver throws and
-  # lint fails loudly rather than checking less.
+  # postinstall has nothing to do. Today no enabled lint rule even loads this resolver
+  # (eslint-config-next turns on no import-resolving rule), so lint coverage does not depend
+  # on it. If such a rule is added and the binding is missing, eslint-plugin-import reports
+  # "Resolve error", which fails `pnpm lint` under --max-warnings=0.
   - unrs-resolver

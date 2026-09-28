@@ -26,8 +26,11 @@ permissions: {}
 
 concurrency:
   # Distinct prefix: pr-template-check uses `template-`; sharing a group would cancel it.
-  group: ci-${{ github.ref }}
-  # Supersede stale runs on a PR; never cancel a run for a commit already on dev/main.
+  # PRs: one group per PR ref, and a new push cancels the stale run.
+  # Pushes to dev/main: one group per commit SHA. GitHub drops an older *pending* run when a
+  # newer one queues in the same group, so a per-branch group could leave a merged commit with
+  # no CI result; per-SHA groups never collide.
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
