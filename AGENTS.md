@@ -11,8 +11,11 @@ The public website for a Kambo practice, and a portfolio piece. Two jobs, in thi
 Stack: Next.js (App Router) + React + TypeScript + Tailwind, pnpm, deployed on Vercel. Client intake
 data will live in Supabase (its own project, see Accounts). Repo: `J0r33/kambo` (public).
 
-**Status (update as it changes):** the Next.js app lands with KAM-2 — until then there is no
-`package.json`, no `node_modules`, and none of the `pnpm` gates below can run. Vercel is not yet
+**Status (update as it changes):** the Next.js app exists (KAM-2): Next 16 under `src/app`,
+pnpm 10 pinned in `packageManager`, Node 24. `pnpm typecheck` / `lint` / `build` run locally
+(`corepack enable`, then `pnpm install`) and in CI (`.github/workflows/ci.yml`, check `typecheck + lint + build`).
+Whether that check blocks a merge depends on the ruleset's required checks, an operator setting,
+so read the ruleset rather than assume. There is **no `test` script yet**. Vercel is not yet
 connected (no deployments exist). Supabase does not exist yet. Where this file or a command
 describes those, it describes the target state; report "not set up yet" rather than a pass.
 

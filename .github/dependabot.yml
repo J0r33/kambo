@@ -1,0 +1,61 @@
+# Dependabot version updates.
+#
+# PRs target `dev` because `dev` is this repo's DEFAULT branch. `target-branch` is deliberately
+# NOT set: GitHub's docs say that when it is set, the options below stop applying to security
+# updates (which always use the default branch). Leaving it unset keeps version and security PRs
+# on one config. If the default branch ever changes, revisit this file.
+#
+# Dependabot PRs are exempt from pr-template-check (dependabot[bot], pr-template-check.yml) and
+# carry no KAM ticket. The operator reviews and merges them by hand like any other PR (Gate B);
+# the CI check still runs on them.
+#
+# pnpm (as of 2026-09, per GitHub's supported-ecosystems docs and dependabot-core#4830):
+# Dependabot supports pnpm v7-v10 only, which is why package.json pins pnpm 10.x, and it does
+# not bump the `packageManager` field itself. Re-check both before moving to pnpm 11+.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Let a fresh release settle before proposing it (version updates only; security updates are
+    # never delayed).
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      # next and eslint-config-next are released in lockstep and must stay on the same version.
+      nextjs:
+        patterns:
+          - next
+          - eslint-config-next
+      # react and react-dom are pinned exactly and must match; their types move with them.
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+    ignore:
+      # @types/node tracks the Node runtime (engines.node 24.x). A new @types/node major is
+      # adopted together with a Node major, deliberately, not by a routine bump.
+      # (Applies to version updates; security updates are not filtered by this.)
+      - dependency-name: "@types/node"
+        update-types:
+          - version-update:semver-major
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: ci
+      include: scope
