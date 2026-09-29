@@ -31,6 +31,11 @@ Record the commit you traced — `git rev-parse --short HEAD` — and put it in 
 If the file list comes back empty, say so loudly and stop. An empty trace is a bug in how this
 was invoked, not a clean bill of health.
 
+**Know the track** (`AGENTS.md` → Workflow → Tracks → Resolving the track; none resolvable → Full).
+On Light or Minimal, re-check it now against `git diff --numstat origin/dev...HEAD` and the Full
+surfaces — before Step 3 spawns anything. If a condition no longer holds, switch to Full as
+`AGENTS.md` → Tracks → Switching up says, and trace at Full weight.
+
 ## Step 2: Categorize
 
 - **Modified files** — need connection tracing
@@ -43,7 +48,7 @@ was invoked, not a clean bill of health.
 - **Other new files** — no existing consumers; lower risk
 - **Deleted files** — need reference verification
 
-## Step 3: Trace connections (parallel)
+## Step 3: Trace connections (parallel on Full)
 
 For each MODIFIED file and each new file wired in by convention or path (Step 2), spawn a
 `deps-mapper` agent (fall back to `general-purpose`), all in one message:
@@ -72,7 +77,7 @@ Task(subagent_type: "deps-mapper", prompt:
 all of those files. Its prompt is the one above with every file listed, and requires **one
 section per file**, answering all six questions and giving that file's risk level on the rubric
 above — Step 5 sorts files by it. Check every file has its section before Step 5; a file without
-one has not been traced. Wherever no track is recorded, run Full.
+one has not been traced.
 
 Question 6 matters: Next.js wires many files by **filename convention**, and workflows and
 scripts run files by path. Neither shows up in the import graph, so a file with "no importers"

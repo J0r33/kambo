@@ -20,7 +20,11 @@ what's wrong before a line is written.
 
 From `$ARGUMENTS` or the current conversation, restate the task in one line. If none is found, ask.
 
-## Phase 2: Falsify the chosen solution (parallel)
+On the Minimal track (`AGENTS.md` → Workflow → Tracks) there is no `/ticket-architect` solution, so
+also state the plan file by file: each file, what changes, and roughly how many lines. Phase 2
+attacks that plan.
+
+## Phase 2: Falsify the chosen solution (parallel on Full)
 
 By the time you get here `/ticket-architect` has already mapped the codebase and the operator
 has picked one of its solutions — except on the Minimal track, which skips it; there, the plan is
@@ -35,8 +39,8 @@ reproduces the first pass's blind spot. Enumerate exhaustively where the design 
 file where the design trusted a grep. **Name the method to avoid, inside the prompt** — the agent
 you spawn has no idea how the plan reached its answer, so its default is the same greps.
 
-Spawn these agents **in one message**. Named custom agents are preferred; fall back to
-`general-purpose` for any that aren't installed.
+Spawn these agents **in one message** (Light and Minimal: see below). Named custom agents are
+preferred; fall back to `general-purpose` for any that aren't installed.
 
 1. `general-purpose` — "The plan claims it touches exactly these files and lines: [paste the
    list]. It derived that list by [name the method]. **Do not use that method.** Independently
@@ -73,7 +77,13 @@ Against the divergences Phase 2 found, assess:
 - Does it hold up on a phone, with reduced motion, with a keyboard?
 
 Rate each concern **Critical / Significant / Minor** — Phase 4 on the Light and Minimal tracks
-depends on it.
+depends on it:
+- **Critical** — as approved, the plan would break something, weaken a gate, or mishandle client
+  data.
+- **Significant** — the plan is wrong or incomplete in a way that changes what gets built.
+- **Minor** — wording or local detail that does not change what gets built.
+
+Unsure between two ratings → the higher one.
 
 **A Phase 2 divergence that changes the plan goes back to the operator** — do not quietly
 re-scope a solution they approved.
@@ -86,7 +96,8 @@ it's settled; if they disagree, investigate yourself until resolved. Only then c
 
 **Light and Minimal tracks:** for each concern rated Critical or Significant, spawn the `critic`
 alone. The concern stands unless the critic refutes it with file:line evidence that holds up when
-you read it yourself. Resolve each Minor concern inline, one line each with the reason.
+you read it yourself. Resolve each Minor concern inline, one line each with the reason, and list
+every Minor concern with its reason in the Phase 5 verdict so the PR body can carry it.
 
 ## Phase 5: Verdict
 
@@ -102,6 +113,9 @@ Phase 2 conditionals — schema-checker: not spawned, plan touches no schema.
 
 On the Light and Minimal tracks, also state the track and that agents 1–3 ran as one agent. On
 Minimal, the docs-checker line reports the one spawned here.
+
+On Light and Minimal, re-check the track against the plan's files and size before the verdict
+(`AGENTS.md` → Tracks → Switching up); if a condition no longer holds, switch to Full and say so.
 
 **On the Minimal track, end with "Ready to implement?" and wait for the operator** — with
 `/ticket-architect` skipped, this is the operator's only design gate.

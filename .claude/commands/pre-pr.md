@@ -69,7 +69,8 @@ or a ticked item, or no box is ticked. It blocks merging only when set as a requ
 
 - **`## Summary`** — what and why; link the Linear ticket; one line of blast-radius summary; and
   the track as a plain bullet, never a checkbox: `- Track: <Full|Light|Minimal> — <the conditions
-  that held>` (`AGENTS.md` → Workflow → Tracks).
+  that held>`, resolved as `AGENTS.md` → Workflow → Tracks → Resolving the track says
+  (none resolvable → Full).
 - **`## Blast radius`** — beat 4's report, with the traced commit and the worked checklist.
 - **`## Testing checklist`** — tick only what was actually run; each item with its result.
 - **`## Data & privacy`** — tick the accurate box; describe any client-data impact. Fill

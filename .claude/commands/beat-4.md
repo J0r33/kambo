@@ -1,5 +1,5 @@
 ---
-description: Beat 4 — Blast Radius Check. Run /blast-radius in full, then work every item on the checklist it generates.
+description: Beat 4 — Blast Radius Check. Run /blast-radius in full, as the ticket's track defines it, then work every item on the checklist it generates.
 argument-hint: [--staged | --branch (default for a full beat) | --pr <number>]
 ---
 
@@ -23,6 +23,12 @@ looks at what is staged and will under-report.
 
 `/pre-pr` is **not** run here. It contains blast radius as its own Phase 1 and it creates the PR
 in Phase 5 — it belongs to Beat 5. Running it here would trace twice and open the PR a beat early.
+
+## Step 0: Know the track
+
+Use the track stated earlier in this session, or resolve it as `AGENTS.md` → Workflow → Tracks →
+Resolving the track says (none → Full). Say it. `/blast-radius` Step 1 re-checks it against the
+real diff.
 
 ## Step 1: `/blast-radius --branch`
 

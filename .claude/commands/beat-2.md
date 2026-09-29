@@ -23,7 +23,7 @@ skips `/ticket-architect`.
 
 | order | command | as the track defines it |
 | -- | -- | -- |
-| 1 | `/ticket-architect <ticket>` | all six phases, including the research agents in Phase 2 (skipped on Minimal) |
+| 1 | `/ticket-architect <ticket>` | all six phases, including the research agents in Phase 2 — on Minimal, not run at all |
 | 2 | `/impl-prep <ticket>` | all five phases, including the Phase 4 trust-but-verify agents |
 
 **Read this before running either.** The failure this command exists to prevent is not skipping
@@ -41,12 +41,14 @@ command did not" evaluates TRUE on exactly the phase an agent is tempted to cut,
 license the failure it was written to prevent. Duplication between phases is fixed by **changing
 the prompts at edit time**, in a reviewed diff — never by an agent judging at run time that a
 phase is redundant. Tracks are the same principle: their weights are fixed in `AGENTS.md` at edit
-time, and the ticket's track is chosen once, at Beat 1, by those written criteria.
+time, and the ticket's track is chosen at Beat 1 by those written criteria — after which it can
+only be raised.
 
 ## Step 0: Know the track
 
-Use the track stated at Beat 1 in this session. If you are resuming without it, read the ticket's
-`Track:` comment in Linear; if there is none, the ticket is Full. Say the track before Step 1.
+Use the track stated at Beat 1 in this session. If you are resuming without it, resolve it as
+`AGENTS.md` → Tracks → Resolving the track says (the heaviest of the `Track:` comments and the
+criteria; none means Full). Say the track before Step 1.
 
 ## Step 1: `/ticket-architect`
 
@@ -70,7 +72,12 @@ is a starting position, not a specification you must obey into a wrong result.
 
 ## Step 2: `/impl-prep`
 
-Invoke the `impl-prep` skill via the Skill tool once a solution is chosen.
+Invoke the `impl-prep` skill via the Skill tool once a solution is chosen — on Minimal, with the
+file-by-file plan `/impl-prep` Phase 1 asks for.
+
+**On Minimal, stop and wait at the end of `/impl-prep`.** It ends with "Ready to implement?" —
+with `/ticket-architect` skipped, that is the operator's design gate. Do not start Step 3 until the
+operator approves the plan.
 
 Run every phase, especially:
 - **Phase 2 — falsify the chosen solution.** Its agents attack the specific plan the operator

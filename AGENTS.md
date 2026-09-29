@@ -153,12 +153,19 @@ writing "we already have coverage, so I'll skip X" — run X.
 ### Tracks — how heavy each beat runs
 
 Every ticket runs all five beats. The track sets only how many subagents some commands spawn and
-whether Beat 2 runs `/ticket-architect`. It is chosen **once, at Beat 1, by the written criteria
-below** — never by an agent judging at run time that a phase is redundant. State it out loud as
-`Track: <Full|Light|Minimal> — <the conditions that hold>` and record that line as a comment on the
-KAM ticket. A worker that picks up a ticket already in progress takes the track from that
-`Track:` comment rather than choosing again; if there is none, the ticket is Full. If you are
-unsure whether a condition holds, it does not hold.
+whether Beat 2 runs `/ticket-architect`. It is chosen **at Beat 1, by the written criteria below**
+— never by an agent judging at run time that a phase is redundant — and after that it can only be
+raised (Switching up, below). State it out loud as
+`Track: <Full|Light|Minimal> — <the conditions that hold>` and post that line as a **new** comment
+on the KAM ticket, as the comment's first line. If you are unsure whether a condition holds, it
+does not hold.
+
+**Resolving the track.** The ticket's track is the **heaviest** of: every ticket comment whose
+first line begins `Track:` — whoever posted it and whatever the ticket's status — and what the
+criteria require of the work as it now stands. After Beat 1, no `Track:` comment means Full. A
+beat or command that needs the track and was not told it earlier in the same session resolves it
+this way; wherever it cannot — for example `/blast-radius` or `/pre-pr` run on their own — it runs
+Full.
 
 - **Full** — the default. Always Full for: every sensitive surface listed under Product except
   `.claude/commands/**` and `.claude/agents/**` (so intake and health data, health/safety copy,
@@ -166,10 +173,12 @@ unsure whether a condition holds, it does not hold.
   and env vars, `.claude/settings.json`, `.github/**`, and this file); a new runtime dependency or
   any build/deploy change (`package.json`, the lockfile, `next.config.*`, `vercel.json`,
   `tsconfig.json`); and anything not clearly Light or Minimal.
-- **Light** — all of: the expected diff is at most ~150 changed lines (excluding generated files)
-  across at most ~5 files; it touches no Full surface; and any change under `.claude/commands/**`
-  or `.claude/agents/**` only corrects or tightens — it removes or weakens no gate, stop point,
-  "never" rule, required command, agent, or proof row.
+- **Light** — all of: the diff is at most ~150 changed lines across at most ~5 files (changed
+  lines = insertions + deletions in `git diff --numstat origin/dev...HEAD`, not counting generated
+  files such as `next-env.d.ts`); it touches no Full surface; and any change under
+  `.claude/commands/**` or `.claude/agents/**` only corrects or tightens — it removes or weakens
+  no gate, stop point, "never" rule, required command, agent, or proof row. At Beat 1 this is
+  judged on the expected diff; it is re-checked against the real one (Switching up, below).
 - **Minimal** — every Light condition, plus: the diff is under ~20 lines and changes no behaviour
   a user or a gate can observe.
 
@@ -182,23 +191,26 @@ the criteria require — if a criterion is too strict, change it in this file th
 | `/impl-prep` Phase 2 | one `general-purpose` falsify agent asking all its questions, plus `docs-checker` | one `general-purpose` falsify agent asking all its questions | as written |
 | `/impl-prep` Phase 4 | one `critic` per concern rated Critical or Significant; Minor concerns resolved inline, one line each | as Minimal | a confirming agent and the `critic` per concern |
 | `/blast-radius` Step 3 | one `deps-mapper` traces every file Step 3 lists | as Minimal | one `deps-mapper` per file |
-| Beat 5 review | `/verify2` (two judges) | as Minimal | `/verify2`, escalated per `/beat-5` on a sensitive surface |
+| Beat 5 review | `/verify2` (two judges) — escalated as on Full if the diff touches `.claude/commands/**` or `.claude/agents/**` | as Minimal | `/verify2`, escalated per `/beat-5` on a sensitive surface |
 
 A Light or Minimal ticket that changes anything under `.claude/commands/**` or `.claude/agents/**`
 still gets the **Full Beat 5 review**: research and planning stay light, but the adversarial review
-is what catches a weakened gate, so it runs at full strength. Wherever no track is recorded — for
-example `/blast-radius` or `/pre-pr` run on their own — run Full.
+is what catches a weakened gate, so it runs at full strength — and one of its judges rules on
+whether the change only corrects or tightens (`/beat-5` Step 1).
 
 **Never lighter, on any track:** all five beats, and every phase of each command that runs; the
 operator design gate ("Ready to implement?"); Beat 3's local gates and proof-menu rows; Beat 4's
 worked checklist; the PR template and required checks; Gates A–D and never merging; the Product
 rules on health claims, safety copy and client data.
 
-**Switching up.** If anything mid-ticket makes a Light or Minimal condition false, switch to Full
-from that point, say so, and update the ticket's `Track:` comment. Then re-run at Full weight what
-already ran lighter: from Minimal, run `/ticket-architect` (with its docs check and design gate)
-before `/impl-prep`; if Beat 2 is done, re-run `/impl-prep`; if Beat 4 is done, re-run
-`/blast-radius` and work its checklist again. Never switch down mid-ticket.
+**Switching up.** Re-check a Light or Minimal track against the real work twice: at the design
+gate (the end of `/impl-prep`), against the plan's files and size; and at `/blast-radius` Step 1,
+against `git diff --numstat origin/dev...HEAD`, before its Step 3 spawns anything. If that check or
+anything else mid-ticket makes a Light or Minimal condition false, switch to **Full** — never to
+Light — from that point, say so, and post a new `Track: Full — <why>` comment. Then re-run at Full
+weight what already ran lighter: `/ticket-architect` (on Minimal it never ran; on Light its Phase 2
+was merged) with its docs check and design gate, then `/impl-prep`, if Beat 2 has started; and
+`/blast-radius` with its checklist, if Beat 4 has run. Never switch down mid-ticket.
 
 `/pre-pr` contains blast radius as its own Phase 1 and creates the PR in Phase 5. Hence beat 4
 analyses (`/blast-radius` alone) and beat 5 gates (`/pre-pr --skip-blast-radius`) — the trace runs

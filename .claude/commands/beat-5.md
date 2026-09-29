@@ -26,6 +26,11 @@ Defaults to the current branch.
 `--skip-blast-radius` is correct **only because Beat 4 ran `/blast-radius` and worked its
 checklist.** If Beat 4 was skipped, drop the flag and let `/pre-pr` do Phase 1 itself.
 
+## Step 0: Know the track
+
+Use the track stated earlier in this session, or resolve it as `AGENTS.md` → Workflow → Tracks →
+Resolving the track says (none → Full). Say it; `/pre-pr` puts it in the PR summary.
+
 ## Step 1: `/verify2`
 
 Invoke the `verify2` skill via the Skill tool.
@@ -40,7 +45,10 @@ process files (`.github/**`, `.claude/**`, `AGENTS.md`) — escalate beyond two 
 **Tracks** (`AGENTS.md` → Workflow → Tracks): a Light or Minimal ticket touches no sensitive
 surface except `.claude/commands/**` and `.claude/agents/**` — and a diff touching those escalates
 here on every track, exactly as on Full. So the rule above applies unchanged on every track; the
-track never lowers it.
+track never lowers it. On a Light or Minimal ticket whose diff touches those paths, give
+`judge-adversarial` the Light condition from `AGENTS.md` → Tracks ("only corrects or tightens …")
+and have it rule, quoting the diff, whether the change removes or weakens anything. If it does,
+the ticket was misclassified: switch to Full (`AGENTS.md` → Tracks → Switching up).
 
 **How to escalate:** spawn the extra judges yourself, **from this main session, in the same
 message as `/verify2`'s two** — a subagent cannot spawn further subagents, so there is no

@@ -25,11 +25,6 @@ extract: affected areas, behaviour described, expected outcome, and any related 
 Spawn these agents **in a single message** so they run concurrently. Named custom agents are
 preferred; fall back to `general-purpose` for any that aren't installed.
 
-**Light track** (`AGENTS.md` → Workflow → Tracks): replace agents 1 and 2 with **one**
-`general-purpose` agent asked both prompts — the map and every occurrence, and what can be reused
-instead of written new. Agent 3 does not arise: a task touching Supabase is always Full. Every
-other phase runs as written.
-
 1. `general-purpose` — "Map the structure of this repo relevant to [task topic]: entry points, key
    modules, the files that own this behavior. Then find EVERY place the pattern behind [task topic]
    occurs — not just one file. Return file paths with line numbers."
@@ -37,6 +32,11 @@ other phase runs as written.
    [task topic]? What can we reuse instead of writing new code?"
 3. `schema-checker` (only if it touches Supabase) — "Describe the tables, columns, and access rules
    involved in [task topic], and whether code assumptions match the real schema."
+
+**Light track** (`AGENTS.md` → Workflow → Tracks): replace agents 1 and 2 with **one**
+`general-purpose` agent asked both prompts — the map and every occurrence, and what can be reused
+instead of written new. Agent 3 does not arise: a task touching Supabase is always Full. Every
+other phase runs as written.
 
 ## Phase 3: Research current best practice (only if it touches the fast-moving stack)
 
