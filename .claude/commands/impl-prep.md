@@ -23,7 +23,8 @@ From `$ARGUMENTS` or the current conversation, restate the task in one line. If 
 ## Phase 2: Falsify the chosen solution (parallel)
 
 By the time you get here `/ticket-architect` has already mapped the codebase and the operator
-has picked one of its solutions. **Do not re-map the repo.** Your job is the opposite of
+has picked one of its solutions — except on the Minimal track, which skips it; there, the plan is
+the one you state in Phase 1, file by file. **Do not re-map the repo.** Your job is the opposite of
 exploration — take the specific plan you were handed and try to break it.
 
 **Every prompt must name the chosen solution and quote the claims it makes.** A prompt that
@@ -51,8 +52,13 @@ Spawn these agents **in one message**. Named custom agents are preferred; fall b
    "The plan assumes this schema shape: [quote it]. Read every migration touching these objects
    **in commit order** and report the shape that actually results, and every divergence."
 
-**Do not spawn `docs-checker` here — except on the reduced beat-2 path**, which skips
+**Do not spawn `docs-checker` here — except on the Minimal track**, which skips
 `/ticket-architect` and so has had no docs check at all.
+
+**Light and Minimal tracks** (`AGENTS.md` → Workflow → Tracks): replace agents 1–3 with **one**
+`general-purpose` agent asked all three questions, and keep every rule above — it names the
+chosen solution, quotes its claims, and is told the method to avoid. `schema-checker` never
+applies (Supabase is a Full surface). Minimal adds `docs-checker`.
 
 If the ticket changes no application code (docs, CI config, command definitions), **change the
 questions to fit the real artifacts** — adapt what a question is asked *about*; never drop the
@@ -66,6 +72,9 @@ Against the divergences Phase 2 found, assess:
 - Does it need privacy / permission / data-protection handling it does not currently have?
 - Does it hold up on a phone, with reduced motion, with a keyboard?
 
+Rate each concern **Critical / Significant / Minor** — Phase 4 on the Light and Minimal tracks
+depends on it.
+
 **A Phase 2 divergence that changes the plan goes back to the operator** — do not quietly
 re-scope a solution they approved.
 
@@ -74,6 +83,10 @@ re-scope a solution they approved.
 For each concern from Phase 3, spawn TWO agents in parallel — a `general-purpose` agent to confirm
 the concern is real, and the `critic` agent to debunk it with counter-evidence. If they agree,
 it's settled; if they disagree, investigate yourself until resolved. Only then continue.
+
+**Light and Minimal tracks:** for each concern rated Critical or Significant, spawn the `critic`
+alone. The concern stands unless the critic refutes it with file:line evidence that holds up when
+you read it yourself. Resolve each Minor concern inline, one line each with the reason.
 
 ## Phase 5: Verdict
 
@@ -86,3 +99,9 @@ the task is READY TO BUILD, and list any confirmed issues, assets to reuse, and 
 Phase 2 conditionals — schema-checker: not spawned, plan touches no schema.
                        docs-checker:   from /ticket-architect Phase 3, <date>.
 ```
+
+On the Light and Minimal tracks, also state the track and that agents 1–3 ran as one agent. On
+Minimal, the docs-checker line reports the one spawned here.
+
+**On the Minimal track, end with "Ready to implement?" and wait for the operator** — with
+`/ticket-architect` skipped, this is the operator's only design gate.

@@ -1,5 +1,5 @@
 ---
-description: Beat 2 — Build & Commit. Run /ticket-architect then /impl-prep in full, then build in small scoped commits.
+description: Beat 2 — Build & Commit. Run /ticket-architect then /impl-prep in full, as the ticket's track defines it, then build in small scoped commits.
 argument-hint: <KAM ticket id; defaults to the ticket on the current branch>
 ---
 
@@ -17,10 +17,14 @@ you inferred.
 
 ## Commands this beat runs — in this order, in full
 
-| order | command | non-negotiable |
+"In full" means as the ticket's track defines it — see `AGENTS.md` → Workflow → Tracks. A track
+changes how many agents a phase spawns, never whether a phase runs, except that the Minimal track
+skips `/ticket-architect`.
+
+| order | command | as the track defines it |
 | -- | -- | -- |
-| 1 | `/ticket-architect <ticket>` | all six phases, including the parallel research agents in Phase 2 |
-| 2 | `/impl-prep <ticket>` | all five phases, including the Phase 4 trust-but-verify agent pair |
+| 1 | `/ticket-architect <ticket>` | all six phases, including the research agents in Phase 2 (skipped on Minimal) |
+| 2 | `/impl-prep <ticket>` | all five phases, including the Phase 4 trust-but-verify agents |
 
 **Read this before running either.** The failure this command exists to prevent is not skipping
 a command outright — it is invoking one and then quietly abridging it: cutting a phase on the
@@ -36,15 +40,22 @@ is the entire value.
 command did not" evaluates TRUE on exactly the phase an agent is tempted to cut, so it would
 license the failure it was written to prevent. Duplication between phases is fixed by **changing
 the prompts at edit time**, in a reviewed diff — never by an agent judging at run time that a
-phase is redundant.
+phase is redundant. Tracks are the same principle: their weights are fixed in `AGENTS.md` at edit
+time, and the ticket's track is chosen once, at Beat 1, by those written criteria.
+
+## Step 0: Know the track
+
+Use the track stated at Beat 1 in this session. If you are resuming without it, read the ticket's
+`Track:` comment in Linear; if there is none, the ticket is Full. Say the track before Step 1.
 
 ## Step 1: `/ticket-architect`
 
-Invoke the `ticket-architect` skill via the Skill tool, passing the ticket id.
+Invoke the `ticket-architect` skill via the Skill tool, passing the ticket id. **On the Minimal
+track, skip this step** — `/impl-prep`'s "Ready to implement?" is then the operator design gate.
 
 Run every phase:
-- Phase 2's research agents are spawned **in one message**, in parallel. Do not replace them with
-  your own reading.
+- Phase 2's research agents are spawned **in one message**, in parallel (Light: the one merged
+  agent `AGENTS.md` → Tracks prescribes). Do not replace them with your own reading.
 - Phase 3's docs check runs whenever the ticket touches the fast-moving stack (Next.js / React /
   TypeScript / Tailwind / Supabase / Vercel / animation or 3D libraries). This repo's Next.js has
   breaking changes from what you were trained on — read `node_modules/next/dist/docs/`.
@@ -67,8 +78,9 @@ Run every phase, especially:
   yourself about to re-run a `/ticket-architect` question, the prompt is wrong — fix the prompt,
   never skip the phase.
 - **Phase 4 — trust but verify.** For each concern, spawn a confirming agent and the `critic`
-  agent to refute it. If they disagree, resolve it yourself before continuing. This is the step
-  that catches wrong plans; it is never optional.
+  agent to refute it (Light and Minimal: the `critic` alone, per `/impl-prep` Phase 4). If they
+  disagree, resolve it yourself before continuing. This is the step that catches wrong plans; it
+  is never optional.
 
 ## Step 3: Build
 
@@ -85,31 +97,22 @@ Only now write code.
 State: which solution was chosen and why, what `/impl-prep` confirmed or refuted, the commits
 made, and anything the research changed about the ticket.
 
-## Proportionality — the one bounded exception
+## Tracks — how heavy this beat runs
 
 Beat 2 at full weight is roughly 10–20 subagent invocations plus an operator approval gate. That is
 right for intake, a migration, or anything touching health data. It is not right for fixing a typo,
-and pretending otherwise is how a process gets abandoned wholesale.
+and pretending otherwise is how a process gets abandoned wholesale. The Full / Light / Minimal
+criteria, what each changes, and how to switch up mid-ticket live in **one place**:
+`AGENTS.md` → Workflow → Tracks. Do not restate them here.
 
-The reduced path is available **only** when all of these hold:
-
-- the diff is under ~20 lines, and
-- it touches no migration, no edge function, no CI workflow, and
-- it touches none of the sensitive surfaces in `AGENTS.md` (intake, health questionnaire,
-  contraindications, waivers, client contact details, Supabase schema/RLS, admin auth, secrets,
-  health/safety copy), and
-- it changes no behaviour a user or a gate can observe.
-
-Then: skip `/ticket-architect`, run `/impl-prep` only.
-
-**Say so out loud.** "Taking the reduced beat-2 path: <which conditions hold>." A stated, bounded
-exception is auditable. An unstated one is the failure this command exists to prevent, wearing a
-different hat. If you are unsure whether a condition holds, it does not hold — run the full beat.
+**Say the track out loud.** "Track: <X> — <which conditions hold>." A stated, bounded exception is
+auditable. An unstated one is the failure this command exists to prevent, wearing a different
+hat. If you are unsure whether a condition holds, it does not hold — run Full.
 
 ## Rules
 
 - Do not open a PR. That is Beat 5. This beat ends at committed work on the branch.
-- Do not skip `/impl-prep` because `/ticket-architect` was thorough. They check different
+- Do not skip `/impl-prep` because `/ticket-architect` was thorough, on any track. They check different
   things: one designs, the other attacks the design against codebase reality.
 - If you find yourself writing "we already have coverage from earlier, so I'll skip X" — that is
   the exact sentence this command exists to stop. Run X.

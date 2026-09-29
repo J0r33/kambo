@@ -25,6 +25,11 @@ extract: affected areas, behaviour described, expected outcome, and any related 
 Spawn these agents **in a single message** so they run concurrently. Named custom agents are
 preferred; fall back to `general-purpose` for any that aren't installed.
 
+**Light track** (`AGENTS.md` → Workflow → Tracks): replace agents 1 and 2 with **one**
+`general-purpose` agent asked both prompts — the map and every occurrence, and what can be reused
+instead of written new. Agent 3 still runs when the task touches Supabase (it never does on Light,
+since Supabase is a Full surface). Every other phase runs as written.
+
 1. `general-purpose` — "Map the structure of this repo relevant to [task topic]: entry points, key
    modules, the files that own this behavior. Then find EVERY place the pattern behind [task topic]
    occurs — not just one file. Return file paths with line numbers."
@@ -81,7 +86,7 @@ Ready to implement? Say "go ahead" to proceed with Solution [N].
 
 ## Rules
 
-- Spawn Phase 2 agents in ONE message (parallel).
+- Spawn Phase 2 agents in ONE message (parallel) — on Light, the one merged agent.
 - Line numbers required — "somewhere in components" is useless.
 - If the fix touches one file when the pattern lives in five, the solution is incomplete.
 - No implementation until the operator approves. Reuse existing patterns before inventing new ones.
