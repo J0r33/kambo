@@ -27,8 +27,8 @@ preferred; fall back to `general-purpose` for any that aren't installed.
 
 **Light track** (`AGENTS.md` → Workflow → Tracks): replace agents 1 and 2 with **one**
 `general-purpose` agent asked both prompts — the map and every occurrence, and what can be reused
-instead of written new. Agent 3 still runs when the task touches Supabase (it never does on Light,
-since Supabase is a Full surface). Every other phase runs as written.
+instead of written new. Agent 3 does not arise: a task touching Supabase is always Full. Every
+other phase runs as written.
 
 1. `general-purpose` — "Map the structure of this repo relevant to [task topic]: entry points, key
    modules, the files that own this behavior. Then find EVERY place the pattern behind [task topic]

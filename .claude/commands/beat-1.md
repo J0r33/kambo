@@ -37,14 +37,15 @@ now rather than after building.
 The track sets how many subagents later beats spawn and whether Beat 2 runs `/ticket-architect`.
 The criteria live in `AGENTS.md` → Workflow → Tracks — apply them there; do not restate them here.
 
-- If the ticket is **already in progress**, read its comments (`mcp__claude_ai_Linear__list_comments`)
-  and take the track from the existing `Track:` comment. Do not choose again. If there is none,
-  choose now.
+- If the ticket is **already in progress**, read its comments
+  (`mcp__claude_ai_Linear__list_comments`) and take the track from the existing `Track:` comment.
+  Do not choose again. If there is none, the ticket is Full.
 - Otherwise judge from the ticket and the repo: which files the work will touch and roughly how
   many lines. If you are unsure whether a condition holds, it does not hold — the default is Full.
 
 State it out loud as `Track: <Full|Light|Minimal> — <the conditions that hold>`, and post that line
-as a comment on the KAM ticket (`mcp__claude_ai_Linear__save_comment`).
+as a comment on the KAM ticket (`mcp__claude_ai_Linear__save_comment`) — Kambo team only, as
+`AGENTS.md` → Accounts and services requires.
 
 ## Step 3: Set it In Progress
 

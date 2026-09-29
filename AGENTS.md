@@ -181,7 +181,7 @@ the criteria require — if a criterion is too strict, change it in this file th
 | `/ticket-architect` (Beat 2) | skipped — `/impl-prep`'s "Ready to implement?" is the operator design gate | Phase 2: one `general-purpose` agent answers both the map and the reuse questions; every other phase as written, Phase 3's docs check on its usual trigger | as written |
 | `/impl-prep` Phase 2 | one `general-purpose` falsify agent asking all its questions, plus `docs-checker` | one `general-purpose` falsify agent asking all its questions | as written |
 | `/impl-prep` Phase 4 | one `critic` per concern rated Critical or Significant; Minor concerns resolved inline, one line each | as Minimal | a confirming agent and the `critic` per concern |
-| `/blast-radius` Step 3 | one `deps-mapper` traces every modified file | as Minimal | one `deps-mapper` per modified file |
+| `/blast-radius` Step 3 | one `deps-mapper` traces every file Step 3 lists | as Minimal | one `deps-mapper` per file |
 | Beat 5 review | `/verify2` (two judges) | as Minimal | `/verify2`, escalated per `/beat-5` on a sensitive surface |
 
 A Light or Minimal ticket that changes anything under `.claude/commands/**` or `.claude/agents/**`
