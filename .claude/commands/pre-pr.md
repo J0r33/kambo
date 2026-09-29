@@ -67,7 +67,9 @@ The PR body MUST follow `.github/PULL_REQUEST_TEMPLATE.md` — that file is the 
 or a ticked item, or no box is ticked. It blocks merging only when set as a required status check
 (operator setting), and it checks structure, not truth.
 
-- **`## Summary`** — what and why; link the Linear ticket; one line of blast-radius summary.
+- **`## Summary`** — what and why; link the Linear ticket; one line of blast-radius summary; and
+  the track as a plain bullet, never a checkbox: `- Track: <Full|Light|Minimal> — <the conditions
+  that held>` (`AGENTS.md` → Workflow → Tracks).
 - **`## Blast radius`** — beat 4's report, with the traced commit and the worked checklist.
 - **`## Testing checklist`** — tick only what was actually run; each item with its result.
 - **`## Data & privacy`** — tick the accurate box; describe any client-data impact. Fill

@@ -7,8 +7,9 @@ allowed-tools: Bash, Read, Grep, Glob, Agent, mcp__claude_ai_Linear__save_commen
 # /verify2
 
 Fast two-judge review of the current changes: one senior engineer, one skeptical critic, thinking
-hard. Use for small PRs, hotfixes, or a quick gut-check. For anything touching client health data,
-use a larger panel (see `/beat-5`).
+hard. Use for small PRs, hotfixes, or a quick gut-check. For a diff touching any sensitive
+surface in `AGENTS.md` — client health data, health/safety copy, the process files — use a larger
+panel (see `/beat-5`, Step 1).
 
 ## Review standard
 

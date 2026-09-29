@@ -18,9 +18,9 @@ Defaults to the current branch.
 
 ## Commands this beat runs — in this order, in full
 
-| order | command | non-negotiable |
+| order | command | as the track defines it |
 | -- | -- | -- |
-| 1 | `/verify2` | both judges — senior engineer **and** critic |
+| 1 | `/verify2` | both judges — senior engineer **and** critic, on every track; escalated as Step 1 says |
 | 2 | `/pre-pr --skip-blast-radius` | the gate, the build check, and PR creation |
 
 `--skip-blast-radius` is correct **only because Beat 4 ran `/blast-radius` and worked its
@@ -33,9 +33,14 @@ Invoke the `verify2` skill via the Skill tool.
 Run both judges. The critic exists to disagree with you — do not soften its prompt, do not
 pre-empt its findings, and do not dismiss a finding because you already considered it.
 
-**`/verify2` is the floor, not the ceiling.** If the diff touches a sensitive surface — intake,
-health questionnaire, contraindications, waivers, client contact details, Supabase schema/RLS,
-admin auth, secrets — escalate beyond two judges.
+**`/verify2` is the floor, not the ceiling.** If the diff touches a sensitive surface — anything
+listed under `AGENTS.md` → Product → Sensitive surfaces, including health/safety copy and the
+process files (`.github/**`, `.claude/**`, `AGENTS.md`) — escalate beyond two judges.
+
+**Tracks** (`AGENTS.md` → Workflow → Tracks): a Light or Minimal ticket touches no sensitive
+surface except `.claude/commands/**` and `.claude/agents/**` — and a diff touching those escalates
+here on every track, exactly as on Full. So the rule above applies unchanged on every track; the
+track never lowers it.
 
 **How to escalate:** spawn the extra judges yourself, **from this main session, in the same
 message as `/verify2`'s two** — a subagent cannot spawn further subagents, so there is no

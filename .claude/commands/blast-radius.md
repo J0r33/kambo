@@ -68,6 +68,11 @@ Task(subagent_type: "deps-mapper", prompt:
 )
 ```
 
+**Light and Minimal tracks** (`AGENTS.md` → Workflow → Tracks): spawn **one** `deps-mapper` for
+all of those files. Its prompt lists every file and requires **one section per file**, answering
+all six questions and giving that file's risk level — Step 5 sorts files by it. A file with no
+section of its own has not been traced. Wherever no track is recorded, run Full.
+
 Question 6 matters: Next.js wires many files by **filename convention**, and workflows and
 scripts run files by path. Neither shows up in the import graph, so a file with "no importers"
 is not therefore safe.

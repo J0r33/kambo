@@ -17,9 +17,9 @@ looks at what is staged and will under-report.
 
 ## Commands this beat runs
 
-| order | command | non-negotiable |
+| order | command | as the track defines it |
 | -- | -- | -- |
-| 1 | `/blast-radius` | all five steps, including the parallel trace agents in Step 3 |
+| 1 | `/blast-radius` | all five steps, including the trace agents in Step 3 (one per file on Full, one for all files on Light/Minimal — `AGENTS.md` → Workflow → Tracks) |
 
 `/pre-pr` is **not** run here. It contains blast radius as its own Phase 1 and it creates the PR
 in Phase 5 — it belongs to Beat 5. Running it here would trace twice and open the PR a beat early.
@@ -32,7 +32,7 @@ Beat 2 ends with the work *committed*, so by the time you get here `git diff --c
 A `--staged` run traces zero files and emits a report that looks clean and means nothing. If the
 changed-file list comes back empty, you invoked it wrong; stop and re-run.
 
-Run every step. Step 3 spawns parallel agents to trace connections — do not substitute your own
+Run every step. Step 3 spawns agents to trace connections — do not substitute your own
 reading of the diff for them. You wrote the change; you are the worst-placed reader of what it
 might break.
 
@@ -75,6 +75,6 @@ worked checklist; never a placeholder.
 - No checklist, not ready. Do not proceed to Beat 5 without one.
 - An empty changed-file list is a bug in the invocation, never a clean result.
 - A checklist with unticked items is an unfinished beat, not a formality.
-- Sensitive surfaces get extra scrutiny: intake, health questionnaire, contraindications,
-  waivers, client contact details, Supabase schema/RLS, admin auth, secrets, health/safety copy.
+- Sensitive surfaces get extra scrutiny — every one listed under `AGENTS.md` → Product →
+  Sensitive surfaces, including health/safety copy and the process files.
 - Do not open a PR here.
