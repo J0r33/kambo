@@ -72,10 +72,11 @@ Hard boundaries, not defaults. You **prepare** work; the operator alone exercise
 - Sensitive surfaces: intake forms and health questionnaires, contraindication screening,
   waivers and signatures, client contact details, Supabase schema/RLS/edge functions, admin auth,
   secrets and env vars, health/safety copy, and the process itself — `.github/**`, `.claude/**`
-  (especially `.claude/settings.json`), and this file. Never loosen a deny rule or a gate to get
-  your own work through; propose it in a PR and say why. Under Workflow → Tracks,
-  `.claude/commands/**` and `.claude/agents/**` may run on the Light track; they stay sensitive
-  for review, and Beat 5 escalates on them.
+  (especially `.claude/settings.json`), `CLAUDE.md`, and this file. Never loosen a deny rule or a
+  gate to get your own work through; propose it in a PR and say why. Under Workflow → Tracks,
+  `.claude/commands/**` and `.claude/agents/**` — except the reviewers, `critic.md` and
+  `judge-*.md` — may run on the Light track; they stay sensitive for review, and Beat 5
+  escalates on them.
 
 ## Accounts and services
 
@@ -167,16 +168,29 @@ beat or command that needs the track and was not told it earlier in the same ses
 this way; wherever it cannot — for example `/blast-radius` or `/pre-pr` run on their own — it runs
 Full.
 
-- **Full** — the default. Always Full for: every sensitive surface listed under Product except
-  `.claude/commands/**` and `.claude/agents/**` (so intake and health data, health/safety copy,
-  client contact details, Supabase including migrations and edge functions, admin auth, secrets
-  and env vars, `.claude/settings.json`, `.github/**`, and this file); a new runtime dependency or
-  any build/deploy change (`package.json`, the lockfile, `next.config.*`, `vercel.json`,
-  `tsconfig.json`); and anything not clearly Light or Minimal.
+- **Full** — the default. Always Full for:
+  - every sensitive surface listed under Product except `.claude/commands/**` and
+    `.claude/agents/**` — and even there, the reviewers (`.claude/agents/critic.md`,
+    `.claude/agents/judge-*.md`) are Full. So: intake and health questionnaires, contraindication
+    screening, waivers and signatures, client contact details, health/safety copy, Supabase
+    including migrations and edge functions, admin auth, secrets and env vars,
+    `.claude/settings.json`, `.github/**`, `CLAUDE.md`, and this file;
+  - copy about Kambo, the practitioner, the ceremony or the experience, plus every page title,
+    meta description, alt text and piece of structured data; plain interface labels ("Contact",
+    "Menu") may run Light;
+  - anything that can send or record data: analytics or other third-party scripts, route
+    handlers and server actions, `middleware.*` / `proxy.*`, and logging or error-tracker setup;
+  - a new runtime dependency, or any file that configures a gate, the toolchain or agent
+    instructions — for example `package.json`, the lockfile, `pnpm-workspace.yaml`,
+    `next.config.*`, `vercel.json`, `tsconfig.json`, `eslint.config.*`, `postcss.config.*`, any
+    Tailwind config, `.npmrc`, `.nvmrc`, `.gitignore`, `.env.example`. The list is illustrative,
+    not exhaustive;
+  - anything not clearly Light or Minimal.
 - **Light** — all of: the diff is at most ~150 changed lines across at most ~5 files (changed
   lines = insertions + deletions in `git diff --numstat origin/dev...HEAD`, not counting generated
   files such as `next-env.d.ts`); it touches no Full surface; and any change under
-  `.claude/commands/**` or `.claude/agents/**` only corrects or tightens — it removes or weakens
+  `.claude/commands/**` or `.claude/agents/**` (other than the reviewers, which are Full) only
+  corrects or tightens — it removes or weakens
   no gate, stop point, "never" rule, required command, agent, or proof row. At Beat 1 this is
   judged on the expected diff; it is re-checked against the real one (Switching up, below).
 - **Minimal** — every Light condition, plus: the diff is under ~20 lines and changes no behaviour
