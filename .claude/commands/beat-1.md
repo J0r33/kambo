@@ -17,7 +17,7 @@ recent conversation.
 
 ## Commands this beat runs
 
-| order | command | non-negotiable |
+| order | command | on every track |
 | -- | -- | -- |
 | 1 | `/flow` | run it in full, at the end, after the branch exists |
 
@@ -32,12 +32,27 @@ linked/blocking tickets.
 State in one line what the ticket actually asks for. If a blocking ticket is unmerged, say so
 now rather than after building.
 
-## Step 2: Set it In Progress
+## Step 2: Choose the track
+
+The track sets how many subagents later beats spawn and whether Beat 2 runs `/ticket-architect`.
+The criteria live in `AGENTS.md` → Workflow → Tracks — apply them there; do not restate them here.
+
+- Judge from the ticket and the repo: which files the work will touch and roughly how many lines.
+  If you are unsure whether a condition holds, it does not hold — the default is Full.
+- Read the ticket's comments (`mcp__claude_ai_Linear__list_comments`), whatever its status. If any
+  comment's first line begins `Track:`, the track is the **heaviest** of those and your own
+  reading (`AGENTS.md` → Tracks → Resolving the track) — never lighter than an existing one.
+
+State it out loud as `Track: <Full|Light|Minimal> — <the conditions that hold>`, and post that line
+as a new comment on the KAM ticket, as its first line (`mcp__claude_ai_Linear__save_comment`) —
+Kambo team only, as `AGENTS.md` → Accounts and services requires.
+
+## Step 3: Set it In Progress
 
 Move the ticket to In Progress in Linear. This is the signal that the work has started — do it
 before branching, not after.
 
-## Step 3: Branch from `dev`
+## Step 4: Branch from `dev`
 
 ```
 git fetch origin --prune
@@ -55,15 +70,15 @@ git checkout --no-track -b <type>/KAM-xxx-<short-desc> origin/dev
 If working in a git worktree, create it from `origin/dev` explicitly, and run `pnpm install`
 inside it — a fresh worktree has no `node_modules`.
 
-## Step 4: `/flow`
+## Step 5: `/flow`
 
 Invoke the `flow` skill via the Skill tool. Run it in full. It confirms the branch state and
 names the next step.
 
-## Step 5: Report
+## Step 6: Report
 
-State plainly: ticket id + title, its status now, the branch name and what it was cut from,
-whether any blocker is outstanding, and the next beat.
+State plainly: ticket id + title, its status now, the track and the conditions that hold, the
+branch name and what it was cut from, whether any blocker is outstanding, and the next beat.
 
 ## Rules
 
