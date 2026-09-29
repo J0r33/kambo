@@ -9,17 +9,38 @@
 # carry no KAM ticket. The operator reviews and merges them by hand like any other PR (Gate B);
 # the CI check still runs on them.
 #
-# pnpm (as of 2026-09, per GitHub's supported-ecosystems docs and dependabot-core#4830):
-# Dependabot supports pnpm v7-v10 only, which is why package.json pins pnpm 10.x, and it does
-# not bump the `packageManager` field itself. Re-check both before moving to pnpm 11+.
+# pnpm (re-checked 2026-09-28 against dependabot-core main @ ca78c14, pnpm_package_manager.rb and
+# npm_and_yarn/Dockerfile): Dependabot supports pnpm 7-12, and its updater image ships pnpm 11.x.
+# It installs the version pinned in package.json `packageManager` through corepack (pnpm 10.x
+# here), and it does not bump `packageManager` itself. The move to pnpm 11 is tracked in KAM-8.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
-    # Let a fresh release settle before proposing it (version updates only; security updates are
-    # never delayed).
+    # Let a fresh release settle before proposing it. GitHub applies cooldown to version updates
+    # only, not to security updates.
+    #
+    # Known hazard on pnpm 10 (KAM-6; npm entry only - remove this note once KAM-8 moves the repo
+    # to pnpm 11): when Dependabot regenerates the lockfile for a VERSION update, it turns this
+    # cooldown into `pnpm update ... --config.minimumReleaseAge=<days x 1440>`. pnpm 10 can then
+    # fail (ERR_PNPM_NO_MATURE_MATCHING_VERSION) instead of falling back when pnpm-lock.yaml holds,
+    # or a package.json range only allows, a version published less than the cooldown before the
+    # run. Ways that happens: someone locks fresh packages (`pnpm add` also writes a `^<latest>`
+    # floor), or a merged Dependabot security PR raised a floor to a fix released hours earlier.
+    # npm version updates then fail until those versions age past the cooldown; the failing job
+    # log names the package and its age. What to do: wait it out and re-run ("Check for updates");
+    # do not hand-edit the lockfile or add a repo gate (below). Keeping package.json range floors
+    # on versions older than the cooldown avoids it - a manual convention, nothing enforces it.
+    #
+    # Deliberately NOT fixed with a repo-level `minimumReleaseAge` in pnpm-workspace.yaml. Per
+    # dependabot-core @ ca78c14: the lockfile step of a security update runs with an age of 0, but
+    # the transitive-dependency update path runs pnpm with no age override, so it is ungated only
+    # because this repo sets no gate. A repo value would hold back (or silently downgrade)
+    # security fixes for transitive dependencies. The durable fix is pnpm >= 11.3, where
+    # Dependabot runs this step with `minimumReleaseAgeStrict=false` and `trustLockfile=true`, so
+    # pnpm falls back instead of failing (KAM-8).
     cooldown:
       default-days: 3
     commit-message:
@@ -46,6 +67,8 @@ updates:
       # @types/node tracks the Node runtime (engines.node 24.x). A new @types/node major is
       # adopted together with a Node major, deliberately, not by a routine bump.
       # (Applies to version updates; security updates are not filtered by this.)
+      # package.json keeps a bare "^24" range on purpose (KAM-6): a floor on a release younger
+      # than the cooldown triggers the pnpm 10 hazard described above.
       - dependency-name: "@types/node"
         update-types:
           - version-update:semver-major
